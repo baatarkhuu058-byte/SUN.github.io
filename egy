@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ИрцБүртгэл Pro | Багш нар (Анги удирдсан + Хичээлийн)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 28px;
+            padding: 16px 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .user-greeting {
+            background: linear-gradient(135deg, #1e3c7220, #2a529820);
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+
+        .teacher-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+        .class-teacher-badge { background: #10b981; color: white; }
+        .subject-teacher-badge { background: #f59e0b; color: white; }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .gradient-card {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        .gradient-card label {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 28px;
+            margin: 28px 0;
+        }
+
+        .attendance-table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .attendance-table th {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 14px 10px;
+            text-align: center;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .attendance-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .attendance-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .student-name-cell {
+            font-weight: 600;
+            background: #f0f4f8;
+            position: sticky;
+            left: 0;
+            text-align: left !important;
+        }
+
+        .time-info {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .status-btn {
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+        }
+
+        .status-present { background: #10b981; color: white; }
+        .status-late { background: #f59e0b; color: white; }
+        .status-absent { background: #ef4444; color: white; }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1e3c72;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 24px;
+            border: 2px solid #e2e8f0;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42,82,152,0.2);
+        }
+
+        button {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30,60,114,0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #2a5298;
+            color: #2a5298;
+        }
+
+        .btn-outline:hover {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 5px 12px;
+            font-size: 0.75rem;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+
+        .alert {
+            background: #fef3c7;
+            padding: 14px;
+            border-radius: 16px;
+            color: #92400e;
+        }
+
+        .current-time-card {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            text-align: center;
+            padding: 16px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+        }
+
+        .current-time {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: monospace;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0 20px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .grid-2col { grid-template-columns: 1fr; }
+            .current-time { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-chalkboard-user"></i> ИрцБүртгэл Pro | Багш нар
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <span id="userNameDisplay" class="user-greeting"><i class="fas fa-user-circle"></i> Зочин</span>
+            <button id="logoutBtn" class="btn-outline btn-small"><i class="fas fa-sign-out-alt"></i> Гарах</button>
+        </div>
+    </div>
+    <div id="dynamicApp"></div>
+    <footer>
+        <i class="fas fa-user-tie"></i> Анги удирдсан багш (Ногоон) | <i class="fas fa-chalkboard"></i> Хичээлийн багш (Улбар шар)
+    </footer>
+</div>
+
+<script>
+    // ============ ӨГӨГДЛИЙН САН ============
+    let users = [
+        { id: 1, username: "admin", password: "admin123", fullName: "Админ Эрхэм", role: "admin", group: "Удирдлага" },
+        // Анги удирдсан багш (class teacher) - энэ ангийн бүх зүйлийг харна
+        { id: 2, username: "batbileg", password: "bat123", fullName: "Б.Батбилэг", role: "class_teacher", group: "11Б анги", teacherType: "class" },
+        // Хичээл орж буй багш нар (subject teacher)
+        { id: 6, username: "oyunchimeg", password: "oyun123", fullName: "О.Оюунчимэг", role: "subject_teacher", group: "11Б анги", teacherType: "subject", subjectId: 1 },
+        { id: 7, username: "boldbaatar", password: "bold123", fullName: "Б.Болдбаатар", role: "subject_teacher", group: "11Б анги", teacherType: "subject", subjectId: 2 },
+        // Сурагчид
+        { id: 3, username: "anuujin", password: "anu123", fullName: "Анужин", role: "student", group: "11Б анги" },
+        { id: 4, username: "temuulen", password: "temu123", fullName: "Тэмүүлэн", role: "student", group: "11Б анги" },
+        { id: 5, username: "sarnai", password: "sar123", fullName: "Сарнай", role: "student", group: "11Б анги" }
+    ];
+
+    // Хичээлүүд (хичээл орж буй багштай холбох)
+    let subjects = [
+        { id: 1, name: "Математик", color: "#10b981", startTime: "09:00", endTime: "10:30", teacherId: 6, teacherName: "О.Оюунчимэг" },
+        { id: 2, name: "Монгол хэл", color: "#3b82f6", startTime: "10:40", endTime: "12:10", teacherId: 7, teacherName: "Б.Болдбаатар" },
+        { id: 3, name: "Англи хэл", color: "#f59e0b", startTime: "13:00", endTime: "14:30", teacherId: null, teacherName: null }
+    ];
+
+    // Ирцийн бүртгэл
+    let attendanceRecords = [
+        { id: 1, studentId: 3, studentName: "Анужин", subjectId: 1, subjectName: "Математик", date: "2025-05-07", time: "08:55", status: "present" },
+        { id: 2, studentId: 4, studentName: "Тэмүүлэн", subjectId: 1, subjectName: "Математик", date: "2025-05-07", time: "09:20", status: "late" }
+    ];
+
+    let currentUser = null;
+    let attendanceChart = null;
+
+    function saveData() {
+        localStorage.setItem("teacher_system_users", JSON.stringify(users));
+        localStorage.setItem("teacher_system_subjects", JSON.stringify(subjects));
+        localStorage.setItem("teacher_system_attendance", JSON.stringify(attendanceRecords));
+    }
+
+    function loadData() {
+        let u = localStorage.getItem("teacher_system_users");
+        let s = localStorage.getItem("teacher_system_subjects");
+        let a = localStorage.getItem("teacher_system_attendance");
+        if(u) users = JSON.parse(u);
+        if(s) subjects = JSON.parse(s);
+        if(a) attendanceRecords = JSON.parse(a);
+    }
+    loadData();
+
+    function getCurrentTime() {
+        let now = new Date();
+        return now.toLocaleTimeString('mn-MN', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function determineStatusByTime(subjectId, arrivedTime) {
+        let subject = subjects.find(s => s.id == subjectId);
+        if(!subject || !arrivedTime) return "absent";
+        let [startHour, startMin] = subject.startTime.split(":").map(Number);
+        let [arrivedHour, arrivedMin] = arrivedTime.split(":").map(Number);
+        let startMinutes = startHour * 60 + startMin;
+        let arrivedMinutes = arrivedHour * 60 + arrivedMin;
+        let diffMinutes = arrivedMinutes - startMinutes;
+        if(arrivedMinutes <= startMinutes) return "present";
+        else if(diffMinutes <= 15) return "present";
+        else return "late";
+    }
+
+    // Хэрэглэгчийн эрхээр харах боломжтой хичээлүүд
+    function getAccessibleSubjects() {
+        if(!currentUser) return [];
+        if(currentUser.role === "admin") return subjects;
+        if(currentUser.role === "class_teacher") return subjects;
+        if(currentUser.role === "subject_teacher") {
+            return subjects.filter(s => s.teacherId === currentUser.id);
+        }
+        return [];
+    }
+
+    // Хэрэглэгчийн эрхээр харах боломжтой сурагчид
+    function getAccessibleStudents() {
+        let students = users.filter(u => u.role === "student");
+        if(!currentUser) return [];
+        if(currentUser.role === "admin") return students;
+        if(currentUser.role === "class_teacher") {
+            return students.filter(s => s.group === currentUser.group);
+        }
+        if(currentUser.role === "subject_teacher") {
+            return students.filter(s => s.group === currentUser.group);
+        }
+        return [];
+    }
+
+    function registerAttendance(studentId, subjectId, customTime = null) {
+        let today = new Date().toISOString().slice(0,10);
+        let currentTime = customTime || getCurrentTime();
+        let student = users.find(u => u.id == studentId);
+        let subject = subjects.find(s => s.id == subjectId);
+        if(!student || !subject) return false;
+        
+        let status = determineStatusByTime(subjectId, currentTime);
+        
+        let existing = attendanceRecords.find(r => r.studentId == studentId && r.subjectId == subjectId && r.date === today);
+        if(existing) {
+            existing.status = status;
+            existing.time = currentTime;
+        } else {
+            attendanceRecords.push({
+                id: Date.now(),
+                studentId, studentName: student.fullName,
+                subjectId, subjectName: subject.name,
+                date: today, time: currentTime, status: status
+            });
+        }
+        saveData();
+        renderApp();
+        return true;
+    }
+
+    // Хичээлийн удирдлага (зөвхөн админ, анги удирдсан багш)
+    function addSubject(name, color, startTime, endTime, teacherId = null, teacherName = null) {
+        let newId = Math.max(...subjects.map(s=>s.id), 0) + 1;
+        subjects.push({ id: newId, name, color, startTime, endTime, teacherId, teacherName });
+        saveData();
+        renderApp();
+    }
+
+    function updateSubject(subjectId, newName, newColor, newStartTime, newEndTime, newTeacherId, newTeacherName) {
+        let subject = subjects.find(s => s.id == subjectId);
+        if(subject) {
+            subject.name = newName;
+            subject.color = newColor;
+            subject.startTime = newStartTime;
+            subject.endTime = newEndTime;
+            subject.teacherId = newTeacherId;
+            subject.teacherName = newTeacherName;
+            attendanceRecords.forEach(r => { if(r.subjectId === subjectId) r.subjectName = newName; });
+            saveData();
+            renderApp();
+        }
+    }
+
+    function deleteSubject(subjectId) {
+        if(subjects.length <= 1) { alert("Хамгийн багадаа 1 хичээл байх ёстой"); return; }
+        subjects = subjects.filter(s => s.id !== subjectId);
+        attendanceRecords = attendanceRecords.filter(r => r.subjectId !== subjectId);
+        saveData();
+        renderApp();
+    }
+
+    // Багш нэмэх
+    function addTeacher(fullName, group, teacherType, username, password, subjectId = null) {
+        if(users.find(u => u.username === username)) { alert("Хэрэглэгчийн нэр давхцаж байна"); return false; }
+        let newId = Math.max(...users.map(u=>u.id), 0) + 1;
+        let newTeacher = {
+            id: newId, username, password, fullName,
+            role: teacherType === "class" ? "class_teacher" : "subject_teacher",
+            group: group, teacherType: teacherType
+        };
+        if(teacherType === "subject" && subjectId) newTeacher.subjectId = subjectId;
+        users.push(newTeacher);
+        saveData();
+        renderApp();
+        return true;
+    }
+
+    function addStudent(fullName, group, username, password) {
+        if(users.find(u => u.username === username)) { alert("Хэрэглэгчийн нэр давхцаж байна"); return false; }
+        let newId = Math.max(...users.map(u=>u.id), 0) + 1;
+        users.push({ id: newId, username, password, fullName, role: "student", group });
+        saveData();
+        renderApp();
+        return true;
+    }
+
+    function deleteUser(userId) {
+        let user = users.find(u => u.id == userId);
+        if(user?.role === "admin") { alert("Админыг устгах боломжгүй"); return; }
+        users = users.filter(u => u.id !== userId);
+        attendanceRecords = attendanceRecords.filter(r => r.studentId !== userId);
+        saveData();
+        renderApp();
+    }
+
+    function login(username, password) {
+        let user = users.find(u => u.username === username && u.password === password);
+        if(user) { currentUser = { ...user }; renderApp(); return true; }
+        return false;
+    }
+
+    function logout() { currentUser = null; renderApp(); }
+
+    function renderChart() {
+        const ctx = document.getElementById('attendanceChartCanvas');
+        if(!ctx) return;
+        let accessibleSubjects = getAccessibleSubjects();
+        let accessibleStudents = getAccessibleStudents();
+        let filtered = attendanceRecords.filter(r => accessibleStudents.some(s => s.id === r.studentId));
+        
+        let subjectStats = accessibleSubjects.map(s => ({
+            name: s.name,
+            present: filtered.filter(r => r.subjectId === s.id && r.status === 'present').length,
+            late: filtered.filter(r => r.subjectId === s.id && r.status === 'late').length
+        }));
+        if(attendanceChart) attendanceChart.destroy();
+        attendanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: subjectStats.map(s => s.name),
+                datasets: [
+                    { label: '✅ Ирсэн', data: subjectStats.map(s => s.present), backgroundColor: '#10b981', borderRadius: 8 },
+                    { label: '⏰ Хоцорсон', data: subjectStats.map(s => s.late), backgroundColor: '#f59e0b', borderRadius: 8 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: true }
+        });
+    }
+
+    function renderApp() {
+        const appDiv = document.getElementById("dynamicApp");
+        if(!currentUser) {
+            appDiv.innerHTML = `
+                <div class="card" style="max-width: 450px; margin: 60px auto;">
+                    <h2><i class="fas fa-lock"></i> Нэвтрэх</h2>
+                    <div class="alert">
+                        <strong>🧪 Тест хэрэглэгчид:</strong><br>
+                        • Админ: admin/admin123<br>
+                        • Анги удирдсан багш: batbileg/bat123 (11Б анги)<br>
+                        • Математикийн багш: oyunchimeg/oyun123<br>
+                        • Монгол хэлний багш: boldbaatar/bold123<br>
+                        • Сурагч: anuujin/anu123
+                    </div>
+                    <div class="form-group"><label>Хэрэглэгчийн нэр</label><input id="loginUsername" placeholder="admin"></div>
+                    <div class="form-group"><label>Нууц үг</label><input id="loginPassword" type="password"></div>
+                    <button id="doLoginBtn"><i class="fas fa-sign-in-alt"></i> Нэвтрэх</button>
+                </div>
+            `;
+            document.getElementById("doLoginBtn")?.addEventListener("click", () => {
+                let uname = document.getElementById("loginUsername").value;
+                let pwd = document.getElementById("loginPassword").value;
+                if(!login(uname, pwd)) alert("Нэвтрэх нэр эсвэл нууц үг буруу!");
+            });
+            document.getElementById("userNameDisplay").innerHTML = '<i class="fas fa-user-circle"></i> Зочин';
+            return;
+        }
+
+        let teacherBadge = "";
+        if(currentUser.role === "class_teacher") {
+            teacherBadge = `<span class="teacher-badge class-teacher-badge"><i class="fas fa-users"></i> Анги удирдсан багш</span>`;
+        } else if(currentUser.role === "subject_teacher") {
+            let mySubject = subjects.find(s => s.teacherId === currentUser.id);
+            teacherBadge = `<span class="teacher-badge subject-teacher-badge"><i class="fas fa-chalkboard"></i> ${mySubject?.name || "Хичээлийн"} багш</span>`;
+        }
+        document.getElementById("userNameDisplay").innerHTML = `<i class="fas fa-user-graduate"></i> ${currentUser.fullName} ${teacherBadge}`;
+
+        let accessibleSubjects = getAccessibleSubjects();
+        let accessibleStudents = getAccessibleStudents();
+        let today = new Date().toISOString().slice(0,10);
+        let currentTime = getCurrentTime();
+
+        // Ирц бүртгэх эрхтэй эсэх
+        let canRegisterAttendance = (currentUser.role === "admin" || currentUser.role === "class_teacher" || currentUser.role === "subject_teacher");
+
+        appDiv.innerHTML = `
+            <div class="current-time-card">
+                <i class="fas fa-clock"></i> Одоогийн цаг
+                <div class="current-time" id="liveClock">${currentTime}</div>
+                <small>Хичээл эхлэх цагаас хойш 15 минутын дотор ирвэл ИРСЭН, хэтэрвэл ХОЦОРСОН</small>
+            </div>
+
+            <!-- Хичээлийн удирдлага (зөвхөн админ, анги удирдсан багш) -->
+            ${(currentUser.role === 'admin' || currentUser.role === 'class_teacher') ? `
+            <div class="card gradient-card">
+                <h3><i class="fas fa-book-open"></i> Хичээлийн удирдлага</h3>
+                <div class="grid-2col">
+                    <div>
+                        <div class="form-group"><label>Шинэ хичээлийн нэр</label><input id="newSubjectName" placeholder="Жишээ: Физик"></div>
+                        <div class="form-group"><label>Өнгө</label><input id="newSubjectColor" type="color" value="#10b981"></div>
+                        <div class="form-group"><label>Эхлэх цаг</label><input id="newStartTime" type="time" value="09:00"></div>
+                        <div class="form-group"><label>Дуусах цаг</label><input id="newEndTime" type="time" value="10:30"></div>
+                        <div class="form-group"><label>Хичээлийн багш (ID)</label><input id="newTeacherId" placeholder="Багшийн ID (null бол хоосон)"></div>
+                        <button id="addSubjectBtn"><i class="fas fa-plus"></i> Хичээл нэмэх</button>
+                    </div>
+                    <div>
+                        <label>Одоогийн хичээлүүд</label>
+                        ${subjects.map(s => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 40px; margin: 5px 0; flex-wrap: wrap;">
+                                <span><span style="background:${s.color}; width:16px; height:16px; display:inline-block; border-radius:16px;"></span> <strong>${s.name}</strong> (${s.startTime}-${s.endTime})<br><small>Багш: ${s.teacherName || "Тодорхойгүй"}</small></span>
+                                <div>
+                                    <button class="btn-outline btn-small" onclick='editSubject(${s.id})'><i class="fas fa-edit"></i></button>
+                                    <button class="btn-small btn-danger" onclick='deleteSubjectById(${s.id})'><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
+            <!-- ИРЦИЙН ХҮСНЭГТ -->
+            <div class="card">
+                <h3><i class="fas fa-table-list"></i> Өнөөдрийн ирцийн хүснэгт (${today})</h3>
+                ${accessibleSubjects.length === 0 ? '<div class="alert">Таны харж болох хичээл байхгүй байна.</div>' : `
+                <div class="attendance-table-wrapper">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr><th>Сурагч</th>
+                                ${accessibleSubjects.map(s => `<th style="background:${s.color}; color:white;">${s.name}<br><small>${s.startTime}-${s.endTime}</small></th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${accessibleStudents.map(student => {
+                                let row = `<tr><td class="student-name-cell"><i class="fas fa-user"></i> ${student.fullName}</td>`;
+                                row += accessibleSubjects.map(subject => {
+                                    let record = attendanceRecords.find(r => r.studentId === student.id && r.subjectId === subject.id && r.date === today);
+                                    let status = record ? record.status : "absent";
+                                    let statusText = status === "present" ? "✅ Ирсэн" : (status === "late" ? "⏰ Хоцорсон" : "❌ Эзгүй");
+                                    let btnClass = status === "present" ? "status-present" : (status === "late" ? "status-late" : "status-absent");
+                                    let timeInfo = record?.time ? `<div class="time-info"><i class="fas fa-clock"></i> ${record.time}</div>` : '';
+                                    let buttonHtml = canRegisterAttendance ? 
+                                        `<button class="status-btn ${btnClass}" onclick="changeAttendance(${student.id}, ${subject.id})">${statusText}</button>` :
+                                        `<div class="status-btn ${btnClass}" style="cursor:default;">${statusText}</div>`;
+                                    return `<td>${buttonHtml}${timeInfo}</td>`;
+                                }).join('');
+                                row += `</tr>`;
+                                return row;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                `}
+                ${accessibleStudents.length === 0 ? '<div class="alert">Сурагч байхгүй байна</div>' : ''}
+            </div>
+
+            <div class="grid-2col">
+                <div class="card">
+                    <h3><i class="fas fa-chart-bar"></i> Хичээл бүрийн ирц</h3>
+                    <canvas id="attendanceChartCanvas" height="200"></canvas>
+                </div>
+
+                <!-- Багш, сурагчдын удирдлага (админ, анги удирдсан багш) -->
+                ${(currentUser.role === 'admin' || currentUser.role === 'class_teacher') ? `
+                <div class="card">
+                    <h3><i class="fas fa-chalkboard-user"></i> Багш, сурагчдын удирдлага</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <button id="addClassTeacherBtn" class="btn-small"><i class="fas fa-user-tie"></i> Анги удирдсан багш</button>
+                        <button id="addSubjectTeacherBtn" class="btn-small"><i class="fas fa-chalkboard"></i> Хичээлийн багш</button>
+                        <button id="addStudentBtn" class="btn-small"><i class="fas fa-user-plus"></i> Сурагч</button>
+                    </div>
+                    <h4>👨‍🏫 Багш нар</h4>
+                    ${users.filter(u => u.role === "class_teacher" || u.role === "subject_teacher").map(t => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <div>
+                                <strong>${t.fullName}</strong>
+                                <span class="teacher-badge ${t.role === 'class_teacher' ? 'class-teacher-badge' : 'subject-teacher-badge'}">
+                                    ${t.role === 'class_teacher' ? 'Анги удирдсан' : 'Хичээлийн багш'}
+                                </span>
+                                <br><small>${t.group}</small>
+                            </div>
+                            <button class="btn-danger btn-small" onclick='deleteUserById(${t.id})'><i class="fas fa-trash"></i></button>
+                        </div>
+                    `).join('') || '<div class="alert">Багш байхгүй</div>'}
+                    
+                    <h4 style="margin-top: 20px;">👩‍🎓 Сурагчид</h4>
+                    ${accessibleStudents.map(s => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <div><strong>${s.fullName}</strong><br><small>${s.group}</small></div>
+                            <button class="btn-danger btn-small" onclick='deleteUserById(${s.id})'><i class="fas fa-trash"></i></button>
+                        </div>
+                    `).join('') || '<div class="alert">Сурагч байхгүй</div>'}
+                </div>
+                ` : ''}
+            </div>
+        `;
+
+        // Live clock
+        if(window.clockInterval) clearInterval(window.clockInterval);
+        window.clockInterval = setInterval(() => {
+            let clock = document.getElementById("liveClock");
+            if(clock) clock.innerText = getCurrentTime();
+        }, 1000);
+
+        document.getElementById("addSubjectBtn")?.addEventListener("click", () => {
+            let name = document.getElementById("newSubjectName").value;
+            let color = document.getElementById("newSubjectColor").value;
+            let startTime = document.getElementById("newStartTime").value;
+            let endTime = document.getElementById("newEndTime").value;
+            let teacherId = document.getElementById("newTeacherId").value;
+            let teacher = users.find(u => u.id == parseInt(teacherId));
+            if(name && startTime && endTime) {
+                addSubject(name, color, startTime, endTime, teacherId ? parseInt(teacherId) : null, teacher?.fullName || null);
+            } else alert("Хичээлийн нэр, эхлэх цаг, дуусах цагийг бөглөнө үү");
+        });
+
+        document.getElementById("addClassTeacherBtn")?.addEventListener("click", () => {
+            let name = prompt("Багшийн бүтэн нэр:");
+            let group = prompt("Анги/Бүлэг:", currentUser.group || "11Б анги");
+            let username = prompt("Нэвтрэх нэр:");
+            let password = prompt("Нууц үг:");
+            if(name && username && password) addTeacher(name, group, "class", username, password);
+        });
+
+        document.getElementById("addSubjectTeacherBtn")?.addEventListener("click", () => {
+            let name = prompt("Багшийн бүтэн нэр:");
+            let group = prompt("Анги/Б
